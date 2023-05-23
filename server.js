@@ -13,21 +13,59 @@ const db = mysql.createConnection(
 
 function init(){
   inquirer
-      .prompt([
-          {
+      .prompt({
+          
               type: 'list',
               message: 'What would you like to do?',
-              name: '',
+              name: 'option',
               choices: [
                   'View all departments',
                   'View all roles',
                   'View all employees',
-                  'Add a department',
-                  'Add a role',
+                  'Add A department',
+                  'Add A role',
                   'Add an employee',
                   'Update an employee role',
                   'Quit'
               ]
-            }
-          ])
-        };
+            })
+            .then(function(answer) {
+
+              switch(answer.action) {
+                  case 'View all departments':
+                      viewDepartments();
+                      break;
+                  
+                  case 'View all roles':
+                      viewRoles();
+                      break;
+      
+                  case 'View all employees':
+                      viewEmployees();
+                      break;
+      
+                  case 'Add A department':
+                      addDepartment();
+                      break;
+      
+                  case 'Add a role':
+                      addRole();
+                      break;
+      
+                  case 'Add an employee':
+                      addEmployee();
+                      break;
+      
+                  case 'Update an employee role':
+                      updateEmployeeRole();
+                      break;
+      
+                  case 'Quit':
+                      connection.end();
+                      break;
+              }
+      
+            })
+      };
+        
+init();
