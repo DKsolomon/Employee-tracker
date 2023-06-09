@@ -1,37 +1,40 @@
-const mysql = require('mysql2');
+const db = require ('./db/connection')
 const inquirer = require('inquirer')
+require('console.table')
 
-const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-  },
-  console.log(`Connected to the employee_db database.`)
-);
+// const db = mysql.createConnection(
+//   {
+//     host: 'localhost',
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_NAME
+//   },
+//   console.log(`Connected to the employee_db database.`)
+// );
 
-function init(){
+
+
+function init() {
   inquirer
-      .prompt({
-          
-          type: 'list',
-          message: 'What would you like to do?',
-          name: 'options',
-          choices: [
-              'View all departments',
-              'View all roles',
-              'View all employees',
-              'Add A department',
-              'Add A role',
-              'Add an employee',
-              'Update an employee role',
-              'Quit'
-          ]
-        })
-        .then(function(answer) {
-
-          switch(answer.action) {
+    .prompt({
+      
+        type: 'list',
+        message: 'What would you like to do?',
+        name: 'option',
+        choices: [
+          'View all departments',
+          'View all roles',
+          'View all employees',
+          'Add A department',
+          'Add A role',
+          'Add an employee',
+          'Update an employee role',
+          'Quit'
+        ]  
+      })
+        .then(answer => {
+          let option = answer.option
+          switch(option) {
               case 'View all departments':
                   viewDepartments();
                   break;
@@ -61,14 +64,15 @@ function init(){
                   break;
       
               case 'Quit':
-                  connection.end();
+                  quit() ;
                   break;
-          }
-            })
+           }
+      });
   };
-        
+  
+  
 function viewDepartments() {
-  let query = "SELECT * FROM departments";
+  let query = 'SELECT * FROM departments';
   db.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
@@ -77,7 +81,7 @@ function viewDepartments() {
 }
 
 function viewRoles() {
-  let query = "SELECT * FROM roles";
+  let query = 'SELECT * FROM roles';
   db.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
@@ -86,11 +90,34 @@ function viewRoles() {
 }
 
 function viewEmployees() {
-  let query = "SELECT * FROM employees";
+  let query = 'SELECT * FROM employees';
   db.query(query, function (err, res) {
     if (err) throw err;
     console.table(res)
     init()
   });
+}
+
+function addDepartment() {
+  inquirer
+      .prompt({
+          name: 'name',
+          type: 'input',
+          message: 'Enter the name of the department:'
+      })
+      .then(function (answer) {
+        let query = 'INSERT INTO departments SET ?';
+          db.query(query, { name: answer.name }, function (err, res) {
+                  if (err) throw err;
+                  console.log(`\n${res.affectedRows}\n`);
+                  init();
+              }
+          );
+      });
+}
+
+function quit() {
+  console.log('goodbye')
+  process.exit();
 }
 init();
