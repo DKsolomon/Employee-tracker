@@ -39,7 +39,7 @@ function init() {
                   addDepartment();
                   break;
       
-              case 'Add a role':
+              case 'Add A role':
                    addRole();
                    break;
       
@@ -111,7 +111,7 @@ function addDepartment() {
 }
   
 
-function addRole() {
+async function addRole () {
    db.query('SELECT * FROM departments', function (departments) {
     inquirer
       .prompt([
