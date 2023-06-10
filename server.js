@@ -112,7 +112,9 @@ function addDepartment() {
   
 
 async function addRole () {
-   db.query('SELECT * FROM departments', function (departments) {
+   db.query('SELECT * FROM departments', function (err, res) {
+    console.log(res)
+    const departments = res;
     inquirer
       .prompt([
         {
